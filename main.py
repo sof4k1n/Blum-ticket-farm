@@ -39,10 +39,11 @@ def main(ticket, aBalance):
         else:
             print(f"\nPlay Выдал ошибку {statusPlay}")
             print(jr)
-            sleep(3)
+            sleep(4)
             continue
     else:
         print(f'\nТикетов нет, всего нафармило {total} поинтов')
+        input("Enter - чтобы выйти")
             
 jwt = input("Введи ключ авторизации: ")
 urlPlay = "https://game-domain.blum.codes/api/v1/game/play"

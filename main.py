@@ -6,40 +6,39 @@ def main(ticket, aBalance):
     print("\nДоступных билетов: ", ticket)
     print("Нынешний баланс: ", aBalance)
     i = 0
-    count = 0
     total = 0
-    statusPlay = 0
-    statusClaim = 0
-    jr = {}
-    payload = {}
     
     while ticket != 0:
-        response = gamerequests.play(urlPlay, headers)
-        statusPlay = response[0]
-        jr = response[2]
-        if statusPlay == 200: 
-            gameid = response[1]
-            count = randint(200, 280)
-            payload = {"gameId": gameid, "points": count}
-            print(f'\n{payload}')
-            sleep(31)
-            response = gamerequests.claim(urlClaim, headersClaim, payload)
-            statusClaim = response
-            while statusClaim != 200:
-                print(f"\nClaim Выдал ошибку {statusClaim}")
+        try:
+            response = gamerequests.play(urlPlay, headers)
+            statusPlay = response[0]
+            jr = response[2]
+            if statusPlay == 200: 
+                gameid = response[1]
+                count = randint(200, 280)
+                payload = {"gameId": gameid, "points": count}
+                print(f'\n{payload}')
+                sleep(31)
                 response = gamerequests.claim(urlClaim, headersClaim, payload)
                 statusClaim = response
-                sleep(3)
+                while statusClaim != 200:
+                    print(f"\nClaim Выдал ошибку {statusClaim}")
+                    response = gamerequests.claim(urlClaim, headersClaim, payload)
+                    statusClaim = response
+                    sleep(3)
+                else:
+                    i+=1
+                    total+=count
+                    ticket-=1
+                    print(f"- Тикет: {i} выполнился на {count} поинтов!")
+                    sleep(5)
+                    print("Начинаю фарм нового билета")
             else:
-                i+=1
-                total+=count
-                print(f"- Тикет: {i} выполнился на {count} поинтов!")
-                sleep(5)
-                print("Начинаю фарм нового билета")
-        else:
-            print(f"\nPlay Выдал ошибку {statusPlay}")
-            print(jr)
-            sleep(4)
+                print(f"\nPlay Выдал ошибку {statusPlay}")
+                print(jr)
+                sleep(4)
+                continue
+        except:
             continue
     else:
         print(f'\nТикетов нет, всего нафармило {total} поинтов')

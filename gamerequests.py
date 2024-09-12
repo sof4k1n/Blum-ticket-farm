@@ -1,15 +1,16 @@
 import requests
+import json
 
 def balance(urlBalance, headers):
     r = requests.get(urlBalance, headers=headers)
-    jr = r.json()
+    jr = json.loads(r.content)
     avaibalance = jr.get("availableBalance")
     ticket = jr.get("playPasses")
     return avaibalance, ticket
 
 def play(urlPlay, headers):
     r = requests.post(urlPlay, headers=headers)
-    jr = r.json()
+    jr = json.loads(r.content)
     gameid = jr.get("gameId")
     return r.status_code, gameid, jr
 

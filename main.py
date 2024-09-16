@@ -10,7 +10,7 @@ def main(ticket, aBalance):
     
     while ticket != 0:
         try:
-            response = gamerequests.play(urlPlay, headers)
+            response = gamerequests.play(urlPlay, headers, jwt)
             statusPlay = response[0]
             jr = response[2]
             if statusPlay == 200: 
@@ -19,11 +19,11 @@ def main(ticket, aBalance):
                 payload = {"gameId": gameid, "points": count}
                 print(f'\n{payload}')
                 sleep(31)
-                response = gamerequests.claim(urlClaim, headersClaim, payload)
+                response = gamerequests.claim(urlClaim, headers, payload, jwt)
                 statusClaim = response
                 while statusClaim != 200:
                     print(f"\nClaim Выдал ошибку {statusClaim}")
-                    response = gamerequests.claim(urlClaim, headersClaim, payload)
+                    response = gamerequests.claim(urlClaim, headers, payload)
                     statusClaim = response
                     sleep(3)
                 else:
@@ -43,15 +43,17 @@ def main(ticket, aBalance):
     else:
         print(f'\nТикетов нет, всего нафармило {total} поинтов')
         input("Enter - чтобы выйти")
-            
-jwt = input("Введи ключ авторизации: ")
+
+urlAuth = "https://user-domain.blum.codes/api/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP"          
 urlPlay = "https://game-domain.blum.codes/api/v1/game/play"
 urlClaim = "https://game-domain.blum.codes/api/v1/game/claim"
 urlBalance = "https://game-domain.blum.codes/api/v1/user/balance"
-headers = {'user-agent': 'Mozilla/5.0 (Linux; Android 13; K) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/128.0.6613.127 Mobile Safari/537.36', 'authorization': jwt, 'sec-ch-ua-platform': 'Android'}
-headersClaim = {'user-agent': 'Mozilla/5.0 (Linux; Android 13; K) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/128.0.6613.127 Mobile Safari/537.36', 'authorization': jwt, 'sec-ch-ua-platform': 'Android', 'accept': 'application/json, text/plain, */*', 'content-type': 'application/json', 'accept-encoding': 'gzip, deflate, br, zstd', 'accept-language': 'ru,ru-RU;q=0.9,en-US;q=0.8,en;q=0.7', 'lang': 'en'}
+headers = {'user-agent': 'Mozilla/5.0 (Linux; Android 13; K) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/128.0.6613.127 Mobile Safari/537.36', 'sec-ch-ua-platform': 'Android', 'accept': 'application/json, text/plain, */*', 'content-type': 'application/json', 'accept-encoding': 'gzip, deflate, br, zstd', 'accept-language': 'ru,ru-RU;q=0.9,en-US;q=0.8,en;q=0.7', 'lang': 'en'}
 
-response = gamerequests.balance(urlBalance, headers)
+token = {"query": str(input("Введи query_id:"))}
+jwt = gamerequests.auth(urlAuth, headers, token)
+
+response = gamerequests.balance(urlBalance, headers, jwt)
 ticket = response[1]
 aBalance = response[0]
 

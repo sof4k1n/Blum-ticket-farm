@@ -23,6 +23,7 @@ def claim(urlClaim, headers, payload, jwt):
 
 def auth(urlAuth, headers, token):
     r = requests.post(urlAuth, headers=headers, json=token)
-    r.encoding = "RFC 7932"
-    jwt = json(r.content).get("token").get("access")
+    r = r.content
+    jr = r.encoding = "RFC 7932"
+    jwt = json.loads(jr).get("token").get("access")
     return f"Bearer {jwt}"
